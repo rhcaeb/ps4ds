@@ -1,1 +1,1 @@
-# ps4ds
+# Practical Statistics for Data Scientists
