@@ -23,7 +23,11 @@ import os
 
 ## import data
 state = pd.read_csv('data/state.csv')
-print(state.head(5))
+
+dfw = pd.read_csv('data/dfw_airline.csv')
+
+sp500_px = pd.read_csv('data/sp500_data.csv.gz', index_col=0)
+sp500_sym = pd.read_csv('data/sp500_sectors.csv')
 
 state['Population'].mean()
 trim_mean(state['Population'], 0.1)
@@ -51,3 +55,20 @@ binnedPopulation.value_counts()
 ### histogram
 ax = (state['Population'] / 1_000_000).plot.hist(figsize = (4, 4))
 ax.set_xlabel('Population (millions)')
+
+### density plots and estimates
+ax = state['Murder.Rate'].plot.hist(density = True, xlim = [0,12], bins = range(1,12))
+state['Murder.Rate'].plot.density(ax = ax)
+ax.set_xlabel('Murder Rate (per 100,000)')
+
+## exploring binary and categorical Data
+ax = dfw.transpose().plot.bar(figsize = (4, 4), legend = False)
+ax.set_xlabel('Cause of Delay')
+ax.set_ylabel('Count')
+
+## correlation
+etfs = sp500_px.loc[sp500_px.index > '2012-07-01',
+sp500_sym[sp500_sym['sector'] == 'etf']['symbol']]
+
+sns.heatmap(etfs.corr(), vmin = -1, vmax = 1,
+cmap = sns.diverging_palette(20, 220, as_cmap = True))
