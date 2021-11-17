@@ -33,3 +33,11 @@ quantile(state[['Murder.Rate']], p = c(0.05, 0.25, 0.50, 0.75, 0.95))
 boxplot(state[['Population']]/1000000, ylab = 'Population (millions)')
 
 ### frequency tables and histograms
+breaks <- seq(from = min(state[['Population']]),
+              to = max(state[['Population']]), length = 11)
+pop_freq <- cut(state[['Population']], breaks = breaks,
+                right = TRUE, include.lowest = TRUE)
+table(pop_freq)
+
+### e.g. histogram
+hist(state[['Population']], breaks = breaks)
