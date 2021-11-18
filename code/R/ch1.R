@@ -6,12 +6,14 @@ library(vioplot)
 library(corrplot)
 library(gmodels)
 library(matrixStats)
+library(hexbin)
 
 ## import & view data ----
 state <- read.csv('data/state.csv')
 dfw <- read.csv('data/dfw_airline.csv')
 sp500_px <- read.csv('data/sp500_data.csv.gz')
 sp500_sym <- read.csv('data/sp500_sectors.csv')
+kc_tax <- read.csv('data/kc_tax.csv.gz')
 
 
 ## analysis ----
@@ -59,4 +61,29 @@ etfs <- sp500_px[row.names(sp500_px) > '2012-07-01',
 
 corrplot(cor(etfs), method = 'ellipse')
 
+### scatterplot
+telecom <- sp500_px[, sp500_sym[sp500_sym$sector == 'telecommunications_services', 'symbol']]
+telecom <- telecom[row.names(telecom) > '2012-07-01',]
 
+plot(telecom$T, telecom$VZ, xlab = 'ATT (T)', ylab = 'Verizon (VZ)')
+
+## multivariate analysis: exploring > 2 variables
+### hexagonal binning / contours (numeric vs categorical)
+kc_tax0 <- subset(kc_tax, TaxAssessedValue < 750000 &
+                    SqFtTotLiving > 100 & 
+                    SqFtTotLiving < 3500)
+nrow(kc_tax0)
+
+
+ggplot(kc_tax0, (aes(x = SqFtTotLiving, y = TaxAssessedValue))) +
+  stat_binhex(color = 'white') +
+  theme_bw() +
+  scale_fill_gradient(low = 'white', high = 'black') +
+  labs(x = 'Finished Square Ft', y = 'Tax-Assessed Value')
+
+ggplot(kc_tax0, aes(SqFtTotLiving, TaxAssessedValue)) +
+  theme_bw() +
+  geom_point(alpha = 0.1) +
+  geom_density2d(color = 'white') +
+  labs(x = 'Finished Sq Ft', y = 'Tax-Assessed Value')
+  

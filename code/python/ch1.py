@@ -72,3 +72,33 @@ sp500_sym[sp500_sym['sector'] == 'etf']['symbol']]
 
 sns.heatmap(etfs.corr(), vmin = -1, vmax = 1,
 cmap = sns.diverging_palette(20, 220, as_cmap = True))
+
+## scatterplot
+# Determine telecommunications symbols
+telecomSymbols = sp500_sym[sp500_sym['sector'] == 'telecommunications_services']['symbol']
+telecom = sp500_px.loc[sp500_px.index >= '2012-07-01', telecomSymbols]
+
+
+ax = telecom.plot.scatter(x = 'T', y = 'VZ', figsize = (4, 4), marker = '$\u25EF$')
+ax.set_xlabel('ATT (T)')
+ax.set_ylabel('Verizon (VZ)')
+ax.axhline(0, color = 'grey', lw = 1)
+ax.axvline(0, color = 'grey', lw = 1)
+
+## multivariate Analysis
+kc_tax0 = kc_tax.loc[(kc_tax.TaxAssessedValue < 750000) &
+                     (kc_tax.SqFtTotLiving > 100) &
+                     (kc_tax.SqFtTotLiving < 3500), :]
+kc_tax0.shape
+
+### hex binning
+ax = kc_tax0.plot.hexbin(x = 'SqFtTotLiving', y = 'TaxAssessedValue',
+gridsize = 30, sharex = False, figsize = (5, 4))
+ax.set_xlabel('Finished Square Feet')
+ax.set_ylabel('Tax-Assessed Value')
+
+### density
+fig, ax = plt.subplots(figsize=(4, 4))
+sns.kdeplot(data=kc_tax0.sample(10000), x='SqFtTotLiving', y='TaxAssessedValue', ax=ax)
+ax.set_xlabel('Finished Square Feet')
+ax.set_ylabel('Tax Assessed Value')
