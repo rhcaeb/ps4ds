@@ -86,4 +86,42 @@ ggplot(kc_tax0, aes(SqFtTotLiving, TaxAssessedValue)) +
   geom_point(alpha = 0.1) +
   geom_density2d(color = 'white') +
   labs(x = 'Finished Sq Ft', y = 'Tax-Assessed Value')
-  
+
+## two categorical values
+library(descr)
+
+### load data
+lc_loans <- read.csv('data/lc_loans.csv')
+
+### contigency table
+x_tab <- CrossTable(lc_loans$grade, lc_loans$status,
+                    prop.c = FALSE, prop.chisq = FALSE, prop.t = FALSE)
+
+## categorical and numeric data
+airline_stats <- read.csv('data/airline_stats.csv')
+
+## compare how % of delays varies across airlines
+boxplot(pct_carrier_delay ~ airline, data = airline_stats,
+        ylim = c(0, 50))
+
+ggplot(data = airline_stats, aes(airline, pct_carrier_delay)) +
+  ylim(0, 50) +
+  geom_violin() +
+  labs(x = '', y = 'Daily % of Delayed Flights') +
+  theme_bw()
+
+## exploring two or more variables
+
+### king county tax eg
+kc_tax0 <- subset(kc_tax, TaxAssessedValue < 750000 &
+                    SqFtTotLiving > 100 & 
+                    SqFtTotLiving < 3500)
+
+ggplot(subset(kc_tax0, ZipCode %in% c(98188, 98105, 98108, 98126)),
+       aes(x = SqFtTotLiving, y = TaxAssessedValue)) +
+  stat_binhex(color = 'white') +
+  theme_bw() +
+  scale_fill_gradient(low = 'white', high = 'blue') +
+  labs(x = 'Finished Sq Ft', y = 'Tax Assessed Value') +
+  facet_wrap('ZipCode')
+
