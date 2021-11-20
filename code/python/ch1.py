@@ -102,3 +102,31 @@ fig, ax = plt.subplots(figsize=(4, 4))
 sns.kdeplot(data=kc_tax0.sample(10000), x='SqFtTotLiving', y='TaxAssessedValue', ax=ax)
 ax.set_xlabel('Finished Square Feet')
 ax.set_ylabel('Tax Assessed Value')
+
+### contigency table
+crosstab = lc_loans.pivot_table(index = 'grade', columns = 'status',
+                                aggfunc = lambda x: len(x), margins = True)
+
+df = crosstab.loc['A':'G' ,:].copy()
+df.loc[:, 'Charged Off' : 'Late'] = df.loc[:, 'Charged Off' : 'Late'].div(df['All'],
+                                                                          axis = 0)
+df['All'] = df['All'] / sum(df['All'])
+perc_crosstab = df
+
+## categorical and numeric Data
+
+### boxplot
+ax = airline_stats.boxplot(by = 'airline', column = 'pct_carrier_delay')
+ax.set_xlabel('')
+ax.set_ylabel('Daily % of Delayed Flights')
+plt.suptitle('')
+
+### violin plot
+ax = sns.violinplot(airline_stats.airline, airline_stats.pct_carrier_delay,
+                    inner = 'quartile', color = 'white')
+
+ax.set_xlabel('')
+ax.set_ylabel('Daily % of Delayed Flights')
+
+## exploring two or more variables
+### see corresponding jupyter notebook for code
